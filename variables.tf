@@ -1,9 +1,9 @@
 variable "aws_region" {
-  default     = "ap-northeast-2"
+  type        = string
   description = "리전"
 }
 
 variable "cluster_name" {
-  default     = "nemo"
+  type        = string
   description = "클러스터 이름"
 }
