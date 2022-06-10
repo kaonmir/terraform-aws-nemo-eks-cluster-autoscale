@@ -8,7 +8,7 @@ resource "kubernetes_service_account" "cluster-autoscaler" {
     name      = local.serviceaccount_name
     namespace = local.serviceaccount_namespace
     annotations = {
-      "eks.amazonaws.com/role-arn" = "${aws_iam_role.k8s-asg-policy.arn}"
+      "eks.amazonaws.com/role-arn" = "${aws_iam_role.k8s_asg_policy.arn}"
     }
     labels = {
       k8s-addon = "cluster-autoscaler.addons.k8s.io"
