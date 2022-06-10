@@ -1,11 +1,9 @@
 variable "aws_region" {
-  default = "ap-northeast-2"
+  default     = "ap-northeast-2"
+  description = "리전"
 }
 
 variable "cluster_name" {
-  default = "nemo"
-}
-
-variable "route53_domain" {
-  type = string
+  default     = "nemo"
+  description = "클러스터 이름"
 }

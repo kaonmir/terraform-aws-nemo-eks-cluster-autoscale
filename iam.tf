@@ -1,8 +1,8 @@
-data "aws_eks_cluster" "nemo_eks_cluster" {
+data "aws_eks_cluster" "eks_cluster" {
   name = var.cluster_name
 }
 data "aws_iam_openid_connect_provider" "oidc" {
-  url = data.aws_eks_cluster.nemo_eks_cluster.identity[0].oidc[0].issuer
+  url = data.aws_eks_cluster.eks_cluster.identity[0].oidc[0].issuer
 }
 data "aws_iam_policy_document" "assume_role_policy" {
   statement {
@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
 }
 
 resource "aws_iam_policy" "k8s_asg_policy" {
-  name        = "EKSASGPolicy"
+  name        = "${var.cluster_name}-EKSASGPolicy"
   path        = "/"
   description = "Policy allowing to set ASG"
 
@@ -53,8 +53,8 @@ resource "aws_iam_policy" "k8s_asg_policy" {
 }
 
 # Making IRSA (IAM Role for Service Account) for EKS
-resource "aws_iam_role" "k8s-asg-policy" {
+resource "aws_iam_role" "k8s_asg_policy" {
   assume_role_policy  = data.aws_iam_policy_document.assume_role_policy.json
   managed_policy_arns = [aws_iam_policy.k8s_asg_policy.arn]
-  name                = "AmazonEKSClusterAutoscalerRole"
+  name                = "${var.cluster_name}-AmazonEKSClusterAutoscalerRole"
 }
