@@ -173,7 +173,6 @@ resource "kubernetes_deployment" "cluster_autoscaler" {
   metadata {
     name      = "cluster-autoscaler"
     namespace = "kube-system"
-
     labels = {
       app = "cluster-autoscaler"
     }
@@ -181,11 +180,8 @@ resource "kubernetes_deployment" "cluster_autoscaler" {
 
   spec {
     replicas = 1
-
     selector {
-      match_labels = {
-        app = "cluster-autoscaler"
-      }
+      match_labels = { app = "cluster-autoscaler" }
     }
 
     template {
@@ -193,10 +189,8 @@ resource "kubernetes_deployment" "cluster_autoscaler" {
         labels = {
           app = "cluster-autoscaler"
         }
-
         annotations = {
-          "prometheus.io/port" = "8085"
-
+          "prometheus.io/port"   = "8085"
           "prometheus.io/scrape" = "true"
         }
       }
@@ -204,27 +198,24 @@ resource "kubernetes_deployment" "cluster_autoscaler" {
       spec {
         volume {
           name = "ssl-certs"
-
           host_path {
             path = "/etc/ssl/certs/ca-bundle.crt"
           }
         }
 
         container {
-          name    = "cluster-autoscaler"
-          image   = "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.21.1"
-          command = ["./cluster-autoscaler", "--v=4", "--stderrthreshold=info", "--cloud-provider=aws", "--skip-nodes-with-local-storage=false", "--expander=least-waste", "--node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/nemo"]
+          name  = "cluster-autoscaler"
+          image = "k8s.gcr.io/autoscaling/cluster-autoscaler:v1.21.1"
+          command = ["./cluster-autoscaler", "--v=4", "--stderrthreshold=info", "--cloud-provider=aws", "--skip-nodes-with-local-storage=false", "--expander=least-waste",
+          "--node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${var.cluster_name}"]
 
           resources {
             limits = {
-              cpu = "100m"
-
+              cpu    = "100m"
               memory = "600Mi"
             }
-
             requests = {
-              cpu = "100m"
-
+              cpu    = "100m"
               memory = "600Mi"
             }
           }
@@ -249,13 +240,11 @@ resource "kubernetes_deployment" "cluster_autoscaler" {
           run_as_non_root = true
           fs_group        = 65534
         }
-
         toleration {
           key      = "TAINED_BY_ADMIN"
           operator = "Exists"
           effect   = "NoSchedule"
         }
-
         priority_class_name = "system-cluster-critical"
       }
     }
